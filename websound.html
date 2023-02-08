@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Generative Sound Application</title>
+  </head>
+  <body>
+    <h1>Generative Sound Application</h1>
+    <button id="playButton">Play Sound</button>
+
+    <script>
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 440; // A4
+
+      const playButton = document.getElementById('playButton');
+      playButton.addEventListener('click', () => {
+        oscillator.connect(audioContext.destination);
+        oscillator.start();
+      });
+    </script>
+  </body>
+</html>
