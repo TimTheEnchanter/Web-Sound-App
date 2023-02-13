@@ -5,17 +5,58 @@
   </head>
   <body>
     <h1>Generative Sound Application</h1>
+    <select id="oscillatorType">
+      <option value="sine">Sine</option>
+      <option value="square">Square</option>
+      <option value="sawtooth">Sawtooth</option>
+      <option value="triangle">Triangle</option>
+    </select>
+    <br>
+    <select id="filterType">
+      <option value="none">None</option>
+      <option value="lowpass">Low-Pass Filter</option>
+      <option value="highpass">High-Pass Filter</option>
+      <option value="bandpass">Band-Pass Filter</option>
+    </select>
+    <br>
     <button id="playButton">Play Sound</button>
 
     <script>
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
-      oscillator.type = 'sine';
-      oscillator.frequency.value = 440; // A4
+      const filter = audioContext.createBiquadFilter();
+
+      const oscillatorTypeSelect = document.getElementById('oscillatorType');
+      oscillatorTypeSelect.addEventListener('change', () => {
+        oscillator.type = oscillatorTypeSelect.value;
+      });
+
+      const filterTypeSelect = document.getElementById('filterType');
+      filterTypeSelect.addEventListener('change', () => {
+        switch (filterTypeSelect.value) {
+          case 'none':
+            filter.type = 'allpass';
+            filter.frequency.value = 0;
+            break;
+          case 'lowpass':
+            filter.type = 'lowpass';
+            filter.frequency.value = 1000;
+            break;
+          case 'highpass':
+            filter.type = 'highpass';
+            filter.frequency.value = 1000;
+            break;
+          case 'bandpass':
+            filter.type = 'bandpass';
+            filter.frequency.value = 1000;
+            break;
+        }
+      });
 
       const playButton = document.getElementById('playButton');
       playButton.addEventListener('click', () => {
-        oscillator.connect(audioContext.destination);
+        oscillator.connect(filter);
+        filter.connect(audioContext.destination);
         oscillator.start();
       });
     </script>
